@@ -54,15 +54,18 @@ var host = builder.Build();
 using (var scope = host.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
     try
     {
-        var db = scope.ServiceProvider.GetRequiredService<BotContext>();
+        var db = services.GetRequiredService<BotContext>();
         db.Database.Migrate();
-        Console.WriteLine("--> Connected to Cloud Database & Migrated successfully!");
+
+        logger.LogInformation("Connected to Cloud Database & Migrated successfully!");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"--> Database Error: {ex.Message}");
+        logger.LogError(ex, "Database Error...");
     }
 }
 
