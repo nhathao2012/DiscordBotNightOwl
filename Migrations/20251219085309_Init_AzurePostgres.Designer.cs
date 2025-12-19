@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DiscordBotNightOwl.Migrations
 {
     [DbContext(typeof(BotContext))]
-    [Migration("20251218220311_Initial_Postgres")]
-    partial class Initial_Postgres
+    [Migration("20251219085309_Init_AzurePostgres")]
+    partial class Init_AzurePostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

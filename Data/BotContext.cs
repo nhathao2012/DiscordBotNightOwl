@@ -11,7 +11,6 @@ namespace DiscordBotNightOwl.Data
 
         public BotContext(DbContextOptions<BotContext> options) : base(options)
         {
-
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder options)

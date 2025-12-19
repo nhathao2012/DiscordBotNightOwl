@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DiscordBotNightOwl.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_Postgres : Migration
+    public partial class Init_AzurePostgres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

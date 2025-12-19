@@ -32,7 +32,7 @@ builder.Services.AddSingleton<DiscordSocketClient>();
 builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
 
 // 3. Database Configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BotContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -56,8 +56,8 @@ using (var scope = host.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<BotContext>();
-        context.Database.Migrate();
+        var db = scope.ServiceProvider.GetRequiredService<BotContext>();
+        db.Database.Migrate();
         Console.WriteLine("--> Connected to Cloud Database & Migrated successfully!");
     }
     catch (Exception ex)

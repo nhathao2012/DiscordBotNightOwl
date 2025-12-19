@@ -2,7 +2,6 @@
 using Discord.Interactions;
 using DiscordBotNightOwl.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace DiscordBotNightOwl.Modules
 {
@@ -132,7 +131,6 @@ namespace DiscordBotNightOwl.Modules
             {
                 var nukeSql = @"DROP SCHEMA public CASCADE;
                               CREATE SCHEMA public;
-                              GRANT ALL ON SCHEMA public TO postgres;
                               GRANT ALL ON SCHEMA public TO public;";
 
                 await _db.Database.ExecuteSqlRawAsync(nukeSql);
@@ -141,9 +139,9 @@ namespace DiscordBotNightOwl.Modules
 
                 await FollowupAsync("Database has been NUKED and Re-built successfully!");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await FollowupAsync("DB is opened in another program");
+                await FollowupAsync("Failed: Database is opened in another program");
             }
         }
         [SlashCommand("shutdown", "Terminate the bot process (Owner only)")]
