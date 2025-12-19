@@ -61,4 +61,4 @@ Thông tin bảo mật được cấu hình an toàn trong file `discordbot.serv
 3. **Backup:** Luôn commit code lên GitHub trước khi thực hiện lệnh `bot-update`.
 
 ---
-*Phát triển và vận hành bởi **Nguyen Nhat Hao**.
+*Phát triển và vận hành bởi **Nguyen Nhat Hao**.*
