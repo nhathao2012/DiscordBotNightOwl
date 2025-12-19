@@ -60,9 +60,9 @@ namespace DiscordBotNightOwl.Services
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine($"[Error in ChatListener] {ex.Message}");
+                    Console.WriteLine($"Error in ChatListener");
                 }
             });
 
