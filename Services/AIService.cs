@@ -35,7 +35,7 @@ namespace DiscordBotNightOwl.Services
                 _chatHistory[channelId] = new List<dynamic>();
 
                 // Load persona at the beginning (Only done once)
-                string personaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotPersona.txt");
+                string personaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "BotPersona.txt");
                 string persona = File.Exists(personaPath)
                                  ? File.ReadAllText(personaPath)
                                  : "Tui là Cú đêm, mà tui quên tui là ai rồi :v"; // In case persona.txt is missing
@@ -81,7 +81,7 @@ namespace DiscordBotNightOwl.Services
                         var jsonNode = JsonNode.Parse(responseString);
                         string? reply = jsonNode?["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString();
 
-                        if (string.IsNullOrEmpty(reply)) return "Bot has no response.";
+                        if (string.IsNullOrEmpty(reply)) return "Từ từ... não t chưa load được, nãy m nói gì á?";
 
                         // 5. SAVE BOT'S RESPONSE TO HISTORY (So it remembers what it said for next time)
                         history.Add(new { role = "model", parts = new[] { new { text = reply } } });
@@ -96,15 +96,16 @@ namespace DiscordBotNightOwl.Services
                         continue;
                     }
 
-                    return $"Google API Error: {response.StatusCode}";
+                    //return $"Google API Error: {response.StatusCode}";
+                    return "Hình như GoogleAI bị lỗi rồi, thử nhắn lại giùm tui nha.";
                 }
                 catch
                 {
-                    return "Network Error...";
+                    return "Ôi cái internet trên sao Hỏa... nãy ní nhắn gì á, tui không đọc được :v";
                 }
             }
 
-            return "Google server is busy. Please try again later.";
+            return "Đm Google server nó lỗi rồi, thử nhắn lại giùm tui nha";
         }
     }
 }

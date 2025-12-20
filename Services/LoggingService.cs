@@ -35,7 +35,10 @@ namespace DiscordBotNightOwl.Services
 
                 if (entry != null && entry.User.Id != user.Id)
                 {
-                    await logChannel.SendMessageAsync($"**VOICE MOVE**\nExecutor: {entry.User.Mention}\nTarget: {user.Mention}\nFrom: `{oldState.VoiceChannel.Name}` -> To: `{newState.VoiceChannel.Name}`");
+                    await logChannel.SendMessageAsync($"**VOICE MOVE**\n" +
+                        $"Executor: {entry.User.Mention}\n" +
+                        $"Target: {user.Mention}\n" +
+                        $"From: `{oldState.VoiceChannel.Name}` -> To: `{newState.VoiceChannel.Name}`");
                 }
             }
 
@@ -47,7 +50,10 @@ namespace DiscordBotNightOwl.Services
 
                 if (entry != null && entry.User.Id != user.Id)
                 {
-                    await logChannel.SendMessageAsync($"**VOICE KICK**\nExecutor: {entry.User.Mention}\nTarget: {user.Mention}\nKicked from: `{oldState.VoiceChannel.Name}`");
+                    await logChannel.SendMessageAsync($"**VOICE KICK**\n" +
+                        $"Executor: {entry.User.Mention}\n" +
+                        $"Target: {user.Mention}\n" +
+                        $"Kicked from: `{oldState.VoiceChannel.Name}`");
                 }
             }
 
@@ -57,7 +63,10 @@ namespace DiscordBotNightOwl.Services
                 var entry = await GetAuditLogAsync(guildUser.Guild, ActionType.MemberUpdated, user.Id);
                 if (entry != null && entry.User.Id != user.Id)
                 {
-                    await logChannel.SendMessageAsync($"**SERVER MUTE**\nExecutor: {entry.User.Mention}\nTarget: {user.Mention}\nMicrophone has been muted.");
+                    await logChannel.SendMessageAsync($"**SERVER MUTE**\n" +
+                        $"Executor: {entry.User.Mention}\n" +
+                        $"Target: {user.Mention}\n" +
+                        $"Microphone has been muted.");
                 }
             }
         }
@@ -74,8 +83,13 @@ namespace DiscordBotNightOwl.Services
             {
                 var entry = await GetAuditLogAsync(newUser.Guild, ActionType.MemberUpdated, newUser.Id);
                 string executor = entry != null ? entry.User.Mention : "Unknown";
+                string reason = entry != null ? entry.Reason : "No reason provided";
 
-                await logChannel.SendMessageAsync($"**TIMEOUT**\nExecutor: {executor}\nTarget: {newUser.Mention}\nExpires: {newUser.TimedOutUntil.Value.ToString("dd/MM/yyyy HH:mm")}");
+                await logChannel.SendMessageAsync($"**TIMEOUT**\n" +
+                    $"Executor: {executor}\n" +
+                    $"Target: {newUser.Mention}\n" +
+                    $"Reason: {reason}\n" +
+                    $"Expires: {newUser.TimedOutUntil.Value.ToString("dd/MM/yyyy HH:mm")}");
             }
         }
 
@@ -89,7 +103,10 @@ namespace DiscordBotNightOwl.Services
             string executor = entry != null ? entry.User.Mention : "Unknown";
             string reason = entry != null ? entry.Reason : "No reason provided";
 
-            await logChannel.SendMessageAsync($"**BAN**\nExecutor: {executor}\nTarget: {user.Username} (ID: {user.Id})\nReason: {reason}");
+            await logChannel.SendMessageAsync($"**BAN**\n" +
+                $"Executor: {executor}\n" +
+                $"Target: {user.Username} (ID: {user.Id})\n" +
+                $"Reason: {reason}");
         }
 
         // --- 4. HANDLE KICK ---
@@ -102,7 +119,10 @@ namespace DiscordBotNightOwl.Services
 
             if (entry != null)
             {
-                await logChannel.SendMessageAsync($"**KICK**\nExecutor: {entry.User.Mention}\nTarget: {user.Username}\nReason: {entry.Reason ?? "Unknown"}");
+                await logChannel.SendMessageAsync($"**KICK**\n" +
+                    $"Executor: {entry.User.Mention}\n" +
+                    $"Target: {user.Username}\n" +
+                    $"Reason: {entry.Reason ?? "Unknown"}");
             }
         }
 
