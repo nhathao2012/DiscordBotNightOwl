@@ -84,12 +84,13 @@ namespace DiscordBotNightOwl.Services
                 var entry = await GetAuditLogAsync(newUser.Guild, ActionType.MemberUpdated, newUser.Id);
                 string executor = entry != null ? entry.User.Mention : "Unknown";
                 string reason = entry != null ? entry.Reason : "No reason provided";
+                var vnTime = newUser.TimedOutUntil.Value.ToOffset(TimeSpan.FromHours(7));
 
                 await logChannel.SendMessageAsync($"**TIMEOUT**\n" +
                     $"Executor: {executor}\n" +
                     $"Target: {newUser.Mention}\n" +
                     $"Reason: {reason}\n" +
-                    $"Expires: {newUser.TimedOutUntil.Value.ToString("dd/MM/yyyy HH:mm")}");
+                    $"Expires: {vnTime:dd/MM/yyyy HH:mm}");
             }
         }
 

@@ -22,7 +22,7 @@ namespace DiscordBotNightOwl.Services
             using (var scope = _services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<BotContext>();
-
+                DateTime vnTime = DateTime.UtcNow.AddHours(7);
                 // --- PART 1: HANDLE LEAVE (CHECK-OUT) ---
                 if (oldState.VoiceChannel != null)
                 {
@@ -32,7 +32,7 @@ namespace DiscordBotNightOwl.Services
 
                     if (lastSession != null)
                     {
-                        lastSession.LeaveTime = DateTime.Now;
+                        lastSession.LeaveTime = vnTime;
                         // Calculate duration
                         lastSession.DurationMinutes = (lastSession.LeaveTime.Value - lastSession.JoinTime).TotalMinutes;
 
@@ -51,7 +51,7 @@ namespace DiscordBotNightOwl.Services
                         GuildName = newState.VoiceChannel.Guild.Name,
                         ChannelName = newState.VoiceChannel.Name,
                         UserName = user.Username,
-                        JoinTime = DateTime.Now,
+                        JoinTime = vnTime,
                         DurationMinutes = 0
                     };
 

@@ -52,7 +52,7 @@ namespace DiscordBotNightOwl.Modules
             var appInfo = await client.GetApplicationInfoAsync();
 
             // Calculate uptime
-            var uptime = DateTime.Now - process.StartTime;
+            var uptime = DateTime.UtcNow - process.StartTime.ToUniversalTime();
             string uptimeString = $"{uptime.Days}d {uptime.Hours}h {uptime.Minutes}m {uptime.Seconds}s";
 
             // Calculate RAM usage in MB
@@ -82,7 +82,8 @@ namespace DiscordBotNightOwl.Modules
                 .AddField("Home Server", homeServerName, false)
 
                 // --- Connection info ---
-                .AddField("Latency (Ping)", $"`{client.Latency} ms`", true)
+                //.AddField("Latency (Ping)", $"`{client.Latency} ms`", true)
+                .AddField("Process Time", $"`{(DateTimeOffset.UtcNow - Context.Interaction.CreatedAt).TotalMilliseconds:F0} ms`", true)
                 //.AddField("IP Address", $"`{System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)}`", true)
                 .AddField("Connection Status", $"`{client.ConnectionState}`", true)
                 .AddField("Server Count", $"`{client.Guilds.Count} Servers`", true)
