@@ -153,24 +153,21 @@ namespace DiscordBotNightOwl.Services
                                          .FlattenAsync())
                                          .ToList();
 
-                foreach (var entry in audits)
-                {
-                    // Use dynamic to access properties without type declaration
-                    // This avoids compile errors when the library is missing type definitions
-                    dynamic data = entry.Data;
+                var entry = audits.FirstOrDefault();
 
-                    try
-                    {
-                        // All Action types (Ban, Kick, Move) have Target property in Data
-                        if (data.Target.Id == targetId) return entry;
-                    }
-                    catch
-                    {
-                        // If Target cannot be read, skip this entry
-                        continue;
-                    }
+                if (entry == null) return null;
+
+                if (DateTimeOffset.UtcNow - entry.CreatedAt > TimeSpan.FromSeconds(30))
+                {
+                    return null;
                 }
-                return null;
+
+                if (actionType == ActionType.Ban || actionType == ActionType.Kick)
+                {
+                    dynamic data = entry.Data;
+                    if (data.Target.Id != targetId) return null;
+                }
+                return entry;
             }
             catch
             {
