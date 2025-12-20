@@ -18,22 +18,6 @@ namespace DiscordBotNightOwl.Modules
             _config = config;
         }
 
-        private async Task<bool> IsModeratorAsync()
-        {
-            var user = Context.User as SocketGuildUser;
-            if (user == null) return false;
-
-            if (user.Id == Context.Guild.OwnerId || user.GuildPermissions.Administrator) return true;
-
-            string modType = _config["RoleTypes:Mod"] ?? "MOD_ACCESS";
-            var modRoleIds = await _db.GuildRoleConfigs
-               .Where(x => x.GuildId == Context.Guild.Id && x.ConfigType == modType)
-               .Select(x => x.RoleId)
-               .ToListAsync();
-
-            return user.Roles.Any(r => modRoleIds.Contains(r.Id));
-        }
-
         [SlashCommand("bot-information", "Show bot information")]
         public async Task ShowStatus()
         {
@@ -43,7 +27,6 @@ namespace DiscordBotNightOwl.Modules
             //    await RespondAsync("Access Denied: This command is for Moderators only.", ephemeral: true);
             //    return;
             //}
-
             await DeferAsync();
 
             // 2. Get system info
@@ -59,14 +42,15 @@ namespace DiscordBotNightOwl.Modules
             double ramUsage = process.WorkingSet64 / 1024.0 / 1024.0;
 
             // Get Home Server info from DB
-            var globalConfig = await _db.GlobalSettings.FirstOrDefaultAsync();
-            string homeServerName = "Not Set";
+            var globalConfig = await _db.GlobalSettings
+                .OrderBy(x => x.Id)
+                .FirstOrDefaultAsync(); string homeServerName = "Not Set";
 
             if (globalConfig != null && globalConfig.HomeServerId != null)
             {
                 ulong homeId = globalConfig.HomeServerId.Value;
                 var homeGuild = client.GetGuild(homeId);
-                homeServerName = homeGuild != null ? $"{homeGuild.Name} (ID: {homeId})" : $"Unknown (ID: {homeId})";
+                homeServerName = homeGuild != null ? $"{homeGuild.Name}" : $"Unknown (ID: {homeId})";
             }
 
             // 3. Build embed
@@ -82,9 +66,7 @@ namespace DiscordBotNightOwl.Modules
                 .AddField("Home Server", homeServerName, false)
 
                 // --- Connection info ---
-                //.AddField("Latency (Ping)", $"`{client.Latency} ms`", true)
-                .AddField("Process Time", $"`{(DateTimeOffset.UtcNow - Context.Interaction.CreatedAt).TotalMilliseconds:F0} ms`", true)
-                //.AddField("IP Address", $"`{System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)}`", true)
+                .AddField("Latency (Ping)", $"`{client.Latency} ms`", true)
                 .AddField("Connection Status", $"`{client.ConnectionState}`", true)
                 .AddField("Server Count", $"`{client.Guilds.Count} Servers`", true)
 

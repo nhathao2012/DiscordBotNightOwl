@@ -35,8 +35,7 @@ namespace DiscordBotNightOwl.Modules
                 return;
             }
 
-            var global = await _db.GlobalSettings.FirstOrDefaultAsync();
-
+            var global = await _db.GlobalSettings.OrderBy(x => x.Id).FirstOrDefaultAsync();
             if (global == null)
             {
                 global = new GlobalSetting { HomeServerId = Context.Guild.Id };
@@ -65,8 +64,7 @@ namespace DiscordBotNightOwl.Modules
 
             try
             {
-                var global = await _db.GlobalSettings.FirstOrDefaultAsync();
-
+                var global = await _db.GlobalSettings.OrderBy(x => x.Id).FirstOrDefaultAsync();
                 if (global == null || global.HomeServerId == null)
                 {
                     await FollowupAsync("Error: Home Server is not set. Use `/set_home` first.");
