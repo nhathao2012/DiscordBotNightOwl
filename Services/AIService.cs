@@ -105,7 +105,7 @@ namespace DiscordBotNightOwl.Services
                 }
             }
 
-            return "Đm Google server nó lỗi rồi, thử nhắn lại giùm tui nha";
+            return "...";
         }
     }
 }
