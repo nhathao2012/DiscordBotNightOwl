@@ -38,12 +38,10 @@ namespace DiscordBotNightOwl.Services
                 string personaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "BotPersona.txt");
                 string persona = File.Exists(personaPath)
                                  ? File.ReadAllText(personaPath)
-                                 : "Tui là Cú đêm, mà tui quên tui là ai rồi :v"; // In case persona.txt is missing
+                                 : "Tui là bot Cú đêm :v";
 
-                // Trick: Pretend this is the first message and the bot has already agreed to the role
-                // This helps the API avoid confusion with role switching
                 _chatHistory[channelId].Add(new { role = "user", parts = new[] { new { text = persona } } });
-                _chatHistory[channelId].Add(new { role = "model", parts = new[] { new { text = "Oke tui đã nhớ rồi nha." } } });
+                _chatHistory[channelId].Add(new { role = "model", parts = new[] { new { text = "Ok!" } } });
             }
 
             // 2. ADD USER'S NEW MESSAGE TO HISTORY
@@ -52,17 +50,26 @@ namespace DiscordBotNightOwl.Services
             history.Add(new { role = "user", parts = new[] { new { text = contentWithIdentity } } });
 
             // 3. LIMIT MEMORY (Keep only the last 20 messages to save costs and avoid length errors)
-            // Keep the first 2 messages (Persona) + 18 most recent messages
             if (history.Count > 20)
             {
-                // Remove old messages from the middle, keep persona at the start
                 history.RemoveRange(2, history.Count - 20);
             }
 
             // 4. SEND ENTIRE CHAT HISTORY
             string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={apiKey}";
 
-            var payload = new { contents = history };
+            //Current timme
+            string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            string systemPrompt = $"Hôm nay là {currentTime}.";
+
+            var payload = new
+            {
+                systemInstruction = new
+                {
+                    part = new[] { new { text = systemPrompt } }
+                },
+                contents = history
+            };
             string jsonString = JsonSerializer.Serialize(payload);
 
             int maxRetries = 3;
