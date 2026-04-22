@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -29,6 +30,10 @@ namespace DiscordBotNightOwl.Services
             modelName = modelName.Trim();
             apiKey = apiKey.Trim();
 
+            //Current timme
+            string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            string systemTimePrompt = $"Ngày và giờ hiện tại là {currentTime}.";
+
             // 1. INITIALIZE CHAT HISTORY (If this channel hasn't chatted before)
             if (!_chatHistory.ContainsKey(channelId))
             {
@@ -40,14 +45,14 @@ namespace DiscordBotNightOwl.Services
                                  ? File.ReadAllText(personaPath)
                                  : "Tui là bot Cú đêm :v";
 
-                _chatHistory[channelId].Add(new { role = "user", parts = new[] { new { text = persona } } });
-                _chatHistory[channelId].Add(new { role = "model", parts = new[] { new { text = "Ok!" } } });
+                _chatHistory[channelId].Add(new { role = "user", parts = new[] { new { text = $"{systemTimePrompt}, {persona}" } } });
+                _chatHistory[channelId].Add(new { role = "model", parts = new[] { new { text = "Ok! Đã nhận persona" } } });
             }
 
             // 2. ADD USER'S NEW MESSAGE TO HISTORY
             var history = _chatHistory[channelId];
             string contentWithIdentity = $"[{userName}]: {userMessage}";
-            history.Add(new { role = "user", parts = new[] { new { text = contentWithIdentity } } });
+            history.Add(new { role = "user", parts = new[] { new { text = $"{systemTimePrompt}, {contentWithIdentity}" } } });
 
             // 3. LIMIT MEMORY (Keep only the last 20 messages to save costs and avoid length errors)
             if (history.Count > 20)
@@ -58,16 +63,8 @@ namespace DiscordBotNightOwl.Services
             // 4. SEND ENTIRE CHAT HISTORY
             string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={apiKey}";
 
-            //Current timme
-            string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            string systemPrompt = $"Hôm nay là {currentTime}.";
-
             var payload = new
             {
-                systemInstruction = new
-                {
-                    part = new[] { new { text = systemPrompt } }
-                },
                 contents = history
             };
             string jsonString = JsonSerializer.Serialize(payload);
@@ -103,8 +100,8 @@ namespace DiscordBotNightOwl.Services
                         continue;
                     }
 
-                    //return $"Google API Error: {response.StatusCode}";
-                    return "Hình như GoogleAI bị lỗi rồi, thử nhắn lại giùm tui nha.";
+                    return $"Google API Error: {response.StatusCode}";
+                    //return "Hình như GoogleAI bị lỗi rồi, thử nhắn lại giùm tui nha.";
                 }
                 catch
                 {
